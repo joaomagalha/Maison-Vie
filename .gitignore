@@ -1,0 +1,5 @@
+.DS_Store
+
+# vídeo bruto de origem (94MB) — não usado pelo site, só a versão
+# otimizada em Video/video-campeche-web.mp4 é referenciada no index.html
+Video/Video Campeche.mp4
