@@ -199,15 +199,40 @@ code,.mono{font-family:var(--font-mono);font-size:.8em;}
 .nav-link:focus-visible,.nav-toggle:focus-visible{outline:2px solid var(--ember-500);outline-offset:4px;border-radius:2px;}
 .nav-actions{display:flex;align-items:center;gap:18px;}
 
-.nav-toggle{display:none;flex-direction:column;gap:5px;padding:8px;}
-.nav-toggle span{width:22px;height:2px;background:var(--white);transition:transform var(--dur-fast) ease,opacity var(--dur-fast) ease,background var(--dur-fast) ease;}
+/* toggle: position:relative + z-index garantem que o ícone continue clicável
+   e visível por cima do painel do menu (antes ficava "static", coberto pelo
+   .nav-list ao abrir — por isso não dava para fechar); as barras viram um "X". */
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:32px;padding:0;position:relative;z-index:3;}
+.nav-toggle span{width:22px;height:2px;background:var(--white);transition:transform var(--dur-fast) var(--ease-out),opacity var(--dur-fast) ease,background var(--dur-fast) ease;}
 .site-header--fixed .nav-toggle span{background:var(--ink-800);}
+/* com o painel aberto o fundo atrás do ícone é sempre o ink-900 do menu,
+   então o traço precisa ficar claro mesmo com o header no estado "fixed" */
+.site-header--fixed .nav-toggle.is-active span{background:var(--white);}
+.nav-toggle.is-active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle.is-active span:nth-child(2){opacity:0;}
+.nav-toggle.is-active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* véu escuro atrás do painel: dá profundidade, sinaliza estado modal e
+   fecha o menu ao tocar fora dele */
+.nav-backdrop{position:fixed;inset:0;z-index:1;background:rgba(15,12,9,.55);opacity:0;pointer-events:none;transition:opacity var(--dur-med) var(--ease-soft);}
+.nav-backdrop.is-open{opacity:1;pointer-events:auto;}
+@media (min-width:961px){.nav-backdrop{display:none;}}
 
 @media (max-width:960px){
-  .nav-list{position:fixed;top:0;right:-300px;height:100vh;width:280px;background:var(--ink-900);flex-direction:column;align-items:flex-start;justify-content:center;gap:26px;padding:40px;transition:right var(--dur-med) var(--ease-soft);box-shadow:-10px 0 40px rgba(0,0,0,.3);}
+  .nav-list{position:fixed;top:0;right:-320px;height:100vh;width:300px;max-width:86vw;overflow-y:auto;z-index:2;background:var(--ink-900);flex-direction:column;align-items:stretch;justify-content:center;gap:4px;padding:100px 32px 40px;transition:right var(--dur-med) var(--ease-soft);box-shadow:-10px 0 40px rgba(0,0,0,.3);}
   .nav-list.is-open{right:0;}
-  .nav-list .nav-link{color:var(--cream-100);}
-  .nav-actions{display:none;}
+  .nav-list li{opacity:0;transform:translateX(18px);transition:opacity var(--dur-med) var(--ease-soft),transform var(--dur-med) var(--ease-soft);}
+  .nav-list.is-open li{opacity:1;transform:translateX(0);}
+  .nav-list.is-open li:nth-child(1){transition-delay:.08s;}
+  .nav-list.is-open li:nth-child(2){transition-delay:.14s;}
+  .nav-list.is-open li:nth-child(3){transition-delay:.2s;}
+  .nav-list.is-open li:nth-child(4){transition-delay:.26s;}
+  .nav-list.is-open li:nth-child(5){transition-delay:.32s;}
+  .nav-list.is-open li:nth-child(6){transition-delay:.38s;}
+  .nav-list .nav-link{display:block;color:var(--cream-100);font-size:.95rem;letter-spacing:.1em;padding:16px 0;border-bottom:1px solid var(--white-08);}
+  .nav-list .nav-link::after{display:none;}
+  .nav-actions{display:block;width:100%;gap:0;margin-top:20px;}
+  .nav-actions .nav-cta{width:100%;justify-content:center;padding:16px 24px;}
   .nav-toggle{display:flex;}
 }
 

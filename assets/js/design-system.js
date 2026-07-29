@@ -8,15 +8,30 @@
   document.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  /* ---- mobile nav toggle ---- */
+  /* ---- mobile nav toggle: abre/fecha painel, véu de fundo, trava o scroll
+     do body enquanto aberto e fecha com Esc, clique fora ou num link ---- */
   var toggle = document.getElementById('navToggle');
   var navList = document.getElementById('navList');
-  toggle.addEventListener('click', function(){
-    var open = navList.classList.toggle('is-open');
+  var navBackdrop = document.getElementById('navBackdrop');
+  function setNavOpen(open){
+    navList.classList.toggle('is-open', open);
+    toggle.classList.toggle('is-active', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    if(navBackdrop) navBackdrop.classList.toggle('is-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  toggle.addEventListener('click', function(){
+    setNavOpen(!navList.classList.contains('is-open'));
   });
   navList.querySelectorAll('.nav-link').forEach(function(l){
-    l.addEventListener('click', function(){ navList.classList.remove('is-open'); });
+    l.addEventListener('click', function(){ setNavOpen(false); });
+  });
+  if(navBackdrop){
+    navBackdrop.addEventListener('click', function(){ setNavOpen(false); });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && navList.classList.contains('is-open')) setNavOpen(false);
   });
 
   /* ---- reveal engine (IntersectionObserver, ref. pollus .js-animation + instagram-slides) ---- */
